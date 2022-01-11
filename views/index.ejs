@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <meta charset="UTF-8">
+  <title>What's the weather like?</title>
+  <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+<body class="container">
+
+<!-- Weather Chip -->
+<div class="chip">
+  <form action="/" method="post">
+    <div class="field has-addons">
+      <div class="control is-expanded">
+        <input name="city" type="text" class="input" placeholder="Enter a City" required>
+      </div>
+      <div class="control">
+        <input type="submit" class="button" class="fa fa-search" value="Get Weather">
+      </div>
+    </div>
+  </form>
+  <!-- Temperature Row -->
+  <div class="row"><%if (cityname){%>
+      <div class="col-5" id="weather-icon">
+        <figure class="image is-50x50">
+          <img src="http://openweathermap.org/img/w/<%=icon %>.png" alt="Image">
+        </figure>
+      </div>
+    <div class="col-7">
+      <div class="row">
+        <div class="col-8">
+          <h1 class="display-3" id="temp"><%=temperature%></h1>
+        </div>
+        <!-- Change Temperature Unit -->
+        <div class="col-2">
+          <script>
+            function getCelsius() {
+              $("#btnCelsius").css("color", "#fff");
+              $("#btnFahrenheit").css("color", "#2d314a");
+              $("#btnCelsius").prop("disabled", true);
+              $("#btnFahrenheit").prop("disabled", false);
+              document.getElementById("temp").innerHTML = "<%= getcelsius%>";
+            }
+            function getFahrenheit() {
+              $("#btnCelsius").css("color", "#2d314a");
+              $("#btnFahrenheit").css("color", "#fff");
+              $("#btnCelsius").prop("disabled", false);
+              $("#btnFahrenheit").prop("disabled", true);
+              document.getElementById("temp").innerHTML = "<%=getfahrenheit%>";
+            }
+          </script>
+          <button id="btnCelsius" onclick="getCelsius()" >°C</button>
+        </div>
+        <div class="col-2">
+          <button id="btnFahrenheit" onclick="getFahrenheit()" disabled>°F</button>
+        </div>
+        <!-- end Change Temperature Unit -->
+      </div>
+      <div class="row">
+        <h6 id="description"><%= descriptions %></h6>
+      </div>
+    </div>
+  </div>
+  <% }%><!-- end Temperature Row -->
+
+  <!-- Date, Time and Place Row -->
+  <div class="row">
+    <div class="col text-center">
+      <h3> <%= cityname %></h3>
+      <h3 ><%=datetime%></h3>
+    </div>
+  </div> <!-- end Date, Time and Place Row -->
+
+  <!-- Other Weather Details Row -->
+  <div id="otherDetails" class="row">
+    <div class="col text-center">
+      <i class='wi wi-humidity' style='font-size: 3em'></i>
+      <h4 id="humidity"></h4>
+    </div>
+    <div class="col text-center">
+      <i class='wi wi-strong-wind' style='font-size: 3em'></i>
+      <h4 id="windSpeed"></h4>
+    </div>
+    <div class="col text-center">
+      <i class='wi wi-thermometer' style='font-size: 3em'></i>
+      <h4 id="celsius"></h4>
+    </div>
+  </div> <!-- end Other Weather Details Row -->
+</div>
+ <!-- end Weather Chip -->
+</body>
+
+</html>
