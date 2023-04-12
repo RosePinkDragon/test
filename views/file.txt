@@ -1,65 +1,86 @@
+import React, { useEffect, useRef } from "react";
+import InputBase from "@mui/material/InputBase";
+import { styled } from "@mui/material/styles";
 
-<!DOCTYPE html>
-<html lang="en">
+interface PinInputProps {
+  value: string;
+  maxLength?: number;
+  onChange: (value: string) => void;
+}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>What's the weather like?</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css" />
-</head>
+const PinInputContainer = styled("div")(({ theme }) => ({
+  display: "flex",
 
-<body>
-<section class="hero is-primary">
-  <div class="hero-body">
-    <div class="container">
-      <h1 class="title">
-        What's the weather like?
-      </h1>
-    </div>
-  </div>
-</section>
-<section class="section">
-  <div class="container">
-    <div class="columns">
-      <div class="column is-offset-4 is-4">
+  "& > *": {
+    margin: theme.spacing(0, 1),
+  },
 
-      </div>
-    </div>
-  </div>
-</section>
-<section class="section">
-  <div class="container">
-    <div class="columns">
-      <div class="column is-offset-4 is-4">
-        <% for (weather of weather_data) { %>
-          <div class="box">
-            <article class="media">
-              <div class="media-left">
-                <figure class="image is-50x50">
-                  <img src="http://openweathermap.org/img/w/<%= weather.icon %>.png" alt="Image">
-                </figure>
-              </div>
-              <div class="media-content">
-                <div class="content">
-                  <p>
-                    <span class="title"><%= weather.city %></span>
-                    <br>
-                    <span class="subtitle"><%= weather.temperature %>° F</span>
-                    <br> <%= weather.description %>
-                  </p>
-                </div>
-              </div>
-            </article>
-          </div>
-        <% } %>
-      </div>
-    </div>
-  </div>
-</section>
-<footer class="footer">
-</footer>
-</body>
+  input: {
+    textAlign: "center",
+    fontSize: 24,
+    width: 48,
+    height: 48,
+    borderBottom: `2px solid ${theme.palette.divider}`,
+    borderRadius: 0,
+    outline: "none",
+    borderColor: "gray",
+    boxShadow: "0 2px 4px 0 rgba(0, 0, 0, 0.1)",
+    transition: "all 0.3s ease-in-out",
 
-</html>
+    "&:focus": {
+      borderColor: theme.palette.primary.main,
+      boxShadow: `0 0 6px ${theme.palette.primary.main}`,
+      borderBottomWidth: 3,
+    },
+  },
+}));
+
+const PinInput: React.FC<PinInputProps> = ({
+  value = "",
+  maxLength = 4,
+  onChange,
+}) => {
+  const firstInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (value.length === maxLength) {
+      firstInputRef.current?.blur();
+    } else {
+      firstInputRef.current?.focus();
+    }
+  }, [value, maxLength]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+    if (newValue.length <= maxLength) {
+      onChange(newValue);
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Backspace" && value.length === 1) {
+      onChange("");
+    }
+  };
+
+  const inputProps = { maxLength };
+
+  return (
+    <PinInputContainer>
+      {[...Array(maxLength)].map((_, index) => (
+        <InputBase
+          key={index}
+          type="password"
+          value={value[index] || ""}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          inputProps={inputProps}
+          autoFocus={index === 0}
+          inputRef={index === 0 ? firstInputRef : undefined}
+        />
+      ))}
+    </PinInputContainer>
+  );
+};
+
+export default PinInput;
